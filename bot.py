@@ -1,6 +1,7 @@
 import discord
 
 from bot_logic import *
+from settings import settings
 
 # La variable intents almacena los privilegios del bot
 intents = discord.Intents.default()
@@ -36,7 +37,7 @@ async def on_message(message):
     else:
         return
 
-client.run("TOKEN")
+client.run(settings["TOKEN"])
 
 
 

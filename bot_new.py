@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 import random
+from settings import settings
 
 description = '''An example bot to showcase the discord.ext.commands extension
 module.
@@ -71,7 +72,7 @@ async def cool(ctx):
     In reality this just checks if a subcommand is being invoked.
     """
     if ctx.invoked_subcommand is None:
-        await ctx.send(f'No, {ctx.subcommand_passed} is not cool')
+        await ctx.send(f'Yes, {ctx.subcommand_passed} is cool')
 
 
 @cool.command(name='bot')
@@ -80,4 +81,4 @@ async def _bot(ctx):
     await ctx.send('Yes, the bot is cool.')
 
 
-bot.run('TOKEN')
+bot.run(settings["TOKEN"])
