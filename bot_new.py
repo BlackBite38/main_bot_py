@@ -4,6 +4,9 @@ import discord
 from discord.ext import commands
 import random
 from settings import settings
+import os
+import requests
+import asyncio
 
 description = '''An example bot to showcase the discord.ext.commands extension
 module.
@@ -75,10 +78,90 @@ async def cool(ctx):
         await ctx.send(f'Yes, {ctx.subcommand_passed} is cool')
 
 
-@cool.command(name='bot')
-async def _bot(ctx):
-    """Is the bot cool?"""
-    await ctx.send('Yes, the bot is cool.')
+# @cool.command(name='bot')
+# async def _bot(ctx):
+#     """Is the bot cool?"""
+#     await ctx.send('Yes, the bot is cool.')
+
+
+print(os.listdir('images'))
+
+@bot.command()
+async def mem(ctx):
+    # Obtiene todos los archivos dentro de la carpeta "images"
+    images = os.listdir('images')
+    # Elige una imagen aleatoria
+    img_name = random.choice(images)
+    with open(f'images/{img_name}', 'rb') as f:
+            picture = discord.File(f)
+        # ¡Vamos a almacenar el archivo de la biblioteca Discord convertido en esta variable!
+    # A continuación, podemos enviar este archivo como parámetro.
+    await ctx.send(file=picture)
+    # ¡Y así es como se puede sustituir el nombre del fichero desde una variable!
+
+@bot.command()
+async def nyoro(ctx):
+    with open('images/nyocover.jpg', 'rb') as f:
+        # ¡Vamos a almacenar el archivo de la biblioteca Discord convertido en esta variable!
+        picture = discord.File(f)
+    # A continuación, podemos enviar este archivo como parámetro.
+    await ctx.send(file=picture)
+
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+@bot.command('duck')
+async def duck(ctx):
+    '''Una vez que llamamos al comando duck, 
+    el programa llama a la función get_duck_image_url'''
+    image_url = get_duck_image_url()
+    await ctx.send(image_url)
+
+
+def get_dog_image_url():    
+    url = 'https://random.dog/woof.json'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+@bot.command('doggo')
+async def doggo(ctx):
+    image_url = get_dog_image_url()
+    await ctx.send(image_url)
+
+
+
+@bot.command('coin')
+async def flip_coin(ctx):
+    flip = random.randint(0, 2)
+    if flip == 0:
+        coin= "HEADS"
+    else:
+        coin= "TAILS"
+    await ctx.send(coin)
+@bot.command('smile')
+async def gen_emodji(ctx):
+    emodji = ["\U0001f600", "\U0001f642", "\U0001F606", "\U0001F923"]
+    emo = random.choice(emodji)
+    await ctx.send(emo)
+
+@bot.command("guess")
+async def on_message(message):
+    await message.channel.send('Guess a number between 1 and 10.')
+    def is_correct(m):
+        return m.author == message.author and m.content.isdigit()
+    answer = random.randint(1, 10)
+    try:
+        guess = await bot.wait_for('message', check=is_correct, timeout=5.0)
+    except asyncio.TimeoutError:
+        return await message.channel.send(f'Sorry, you took too long it was {answer}.')
+    if int(guess.content) == answer:
+        await message.channel.send('You are right!')
+    else:
+        await message.channel.send(f'Oops. It is actually {answer}.')
 
 
 bot.run(settings["TOKEN"])
