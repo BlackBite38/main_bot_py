@@ -101,7 +101,7 @@ async def mem(ctx):
 
 @bot.command()
 async def nyoro(ctx):
-    with open('images/nyocover.jpg', 'rb') as f:
+    with open('Churu/nyocover.jpg', 'rb') as f:
         # ¡Vamos a almacenar el archivo de la biblioteca Discord convertido en esta variable!
         picture = discord.File(f)
     # A continuación, podemos enviar este archivo como parámetro.
@@ -133,10 +133,29 @@ async def doggo(ctx):
     await ctx.send(image_url)
 
 
+def get_fox_image_url():    
+    image = 'https://randomfox.ca/floof/'
+    res = requests.get(image)
+    data = res.json()
+    return data['image']
+
+@bot.command('fox')
+async def fox(ctx):
+    image_url = get_fox_image_url()
+    await ctx.send(image_url)
+
+
+@bot.command('animal')
+async def picture(ctx):
+    source=[get_duck_image_url(), get_dog_image_url(), get_fox_image_url()]
+    image_chosen = random.choice(source)
+    image_url = image_chosen
+    await ctx.send(image_url)
+
 
 @bot.command('coin')
 async def flip_coin(ctx):
-    flip = random.randint(0, 2)
+    flip = random.randint(0, 1)
     if flip == 0:
         coin= "HEADS"
     else:
